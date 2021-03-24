@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "client/dist/",
   "cloudfunctionRoot": "cloud/functions/",
-  "projectname": "morning1",
+  "projectname": "morning",
   "description": "兔子早安",
   "appid": "wx1ea575aa1352c705",
   "setting": {
@@ -41,5 +41,6 @@
     "minifyWXSS": true
   },
   "compileType": "miniprogram",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
   "condition": {}
 }

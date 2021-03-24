@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import Taro, { Config } from '@tarojs/taro'
+import { Component } from 'react'
+import Taro from '@tarojs/taro'
 
 import 'taro-ui/dist/style/index.scss' // 引入组件样式 - 方式一
 import './app.scss'
@@ -10,6 +10,12 @@ class App extends Component {
     if (process.env.TARO_ENV === 'weapp') {
       Taro.cloud.init()
     }
+
+    // Taro.loadFontFace({
+    //   global: true,
+    //   family: 'Alibaba Puhui', //Css中引用使用的字体名
+    //   source: 'url("https://ebechina-test.oss-cn-hangzhou.aliyuncs.com/font/Alibaba-PuHuiTi-Regular.ttf")',
+    // })
   }
 
   componentDidShow() { }

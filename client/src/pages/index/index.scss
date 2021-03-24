@@ -1,0 +1,25 @@
+.index_wrapper{
+  padding-top: 70px;
+
+  .index_info{
+    text-align: center;
+    font-family: 'Alibaba Puhui';
+    margin-bottom: 30px;
+
+    .index_info_item{
+      margin-bottom: 50px;
+      font-size: 45px;
+      color:#373737;
+
+      .at-input {
+        margin-left: 0 !important;
+      }
+    }
+
+    .index_info_gap{
+      margin: 50px auto;
+      font-size: 45px;
+    }
+  }
+}
+
