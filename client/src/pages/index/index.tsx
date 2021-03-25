@@ -5,12 +5,14 @@ import Taro from '@tarojs/taro'
 import { View, Picker, Button } from '@tarojs/components'
 import { AtButton, AtMessage, AtInput } from 'taro-ui'
 
-import { addSchedule } from '../../services/schedule';
+import { addSchedule, sendSchedule, getSchedule } from '../../services/schedule';
 import './index.scss'
 
 // import FireWorks from '../../components/fireworks'
 
 const Index = () => {
+
+  const templateId = 'dxH2-uMQglbYE7zRGG6IcikgNETtRd-S3oCE83wWLVA';
 
   const [auth, updateAuth] = useState<boolean>(false);
 
@@ -103,19 +105,95 @@ const Index = () => {
       return;
     }
 
-    const data = {
-      sleepTimeText,
-      wakeTimeText,
-      note,
-    };
+    // try {
+    //   const result = await Taro.requestSubscribeMessage({ tmplIds: [templateId] });
+    //   console.log('===result===');
+    //   console.log(result);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    Taro.requestSubscribeMessage({
+      tmplIds: [templateId],
+      success: async (res) => {
+        console.log(res);
+        const data = {
+          sleepTimeText,
+          wakeTimeText,
+          note,
+        };
 
-    try {
-      const result = await addSchedule(data);
+        try {
+          await addSchedule(data);
 
-      console.log(result);
-    } catch (error) {
-      console.log(error)
-    }
+          try {
+            const { result } = await getSchedule();
+            const { data: schedules } = result as any;
+            console.log(result);
+
+            if (schedules.length) {
+              schedules.forEach(async (schedule) => {
+                Taro.cloud.callFunction({
+                  // 要调用的云函数名称
+                  name: 'sendSchedule',
+                  // 传递给云函数的参数
+                  data: {
+                    time1: {
+                      value: schedule.sleepTimeText,
+                    },
+                    time2: {
+                      value: schedule.wakeTimeText,
+                    },
+                    thing3: {
+                      value: schedule.note,  // 存在长度限制，20个字符
+                    },
+                  },
+                  success: res => {
+                    console.log(res)
+                    // output: res.result === 3
+                  },
+                  fail: err => {
+                    console.log(err)
+                    // handle error
+                  },
+                })
+                // try {
+                //   const res = await sendSchedule(schedule);
+                //   console.log(res);
+                // } catch (error) {
+                //   console.log(error);
+                // }
+              });
+            }
+            // const result = await sendSchedule();
+
+            // console.log(schedules);
+            // console.log(result);
+
+            Taro.atMessage({
+              message: '熊收到消息啦',
+              type: 'success',
+            });
+
+            // updateSleepTime('');
+            // updateSleepTimeText('');
+            // updateWakeTime('');
+            // updateWakeTimeText('');
+            // updateNote('');
+
+          } catch (error) {
+            console.log(error)
+          }
+
+        } catch (error) {
+          console.log(error)
+        }
+      },
+      fail: (error => {
+        console.log(error)
+      })
+    })
+
+
   }
 
   const handleReset = () => {
@@ -219,7 +297,7 @@ const Index = () => {
           type='text'
           placeholder='兔子还有别的要对熊说吗？'
           value={note}
-          onChange={(value) => { console.log(value) }}
+          onChange={(value) => updateNote(value as string)}
         />
       </View>
     </View>
